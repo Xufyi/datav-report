@@ -1,8 +1,8 @@
 <template>
     <div class="topView">
-      <common-card  
+      <common-card
         title="累计销售额"
-        value="￥ 32,039,165" 
+        value="￥ 32,039,165"
       >
         <template>
           <div class="compare_wrap">
@@ -25,37 +25,32 @@
       </common-card>
     </div>
 </template>
-  
+
 <script>
-  import commonCardMixin from '@/components/mixins/commonCardMixin'
+import commonCardMixin from "@/components/mixins/commonCardMixin";
 
-  export default {
-    mixins:[
-      commonCardMixin
-    ],
-    components: {
-    },
-    data(){
-      return{
-
-      }
-    }
+export default {
+  mixins: [commonCardMixin],
+  components: {},
+  data() {
+    return {};
   }
+};
 </script>
-  
+
 <style lang="scss" scoped>
-  .compare_wrap{
-    font-size: 12px;
-    height: 100%;
-    .compare{
-      padding: 2px 0;
-      height: 50%;
-      display: flex;
-      align-items: center
-    }
-    .total{
-      font-style: 12px;
-      color: #666;
-    }
+.compare_wrap {
+  font-size: 12px;
+  height: 100%;
+  .compare {
+    padding: 2px 0;
+    height: 50%;
+    display: flex;
+    align-items: center;
   }
+  .total {
+    font-style: 12px;
+    color: #666;
+  }
+}
 </style>
