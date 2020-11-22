@@ -16,6 +16,7 @@ import topView from "../components/topView";
 import saleView from "../components/saleView";
 import bottomView from "@/components/bottomView";
 import mapView from "@/components/mapView";
+import { test } from "@/api";
 
 export default {
   name: "Home",
@@ -51,6 +52,11 @@ export default {
         ]
       }
     };
+  },
+  mounted() {
+    test().catch(e => {
+      console.log("e", e);
+    });
   }
 };
 </script>

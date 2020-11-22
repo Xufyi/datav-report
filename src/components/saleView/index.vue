@@ -161,9 +161,7 @@ export default {
     };
   },
   methods: {
-    handleSelect(val) {
-      console.log(val);
-    }
+    handleSelect(val) {}
   }
 };
 </script>
