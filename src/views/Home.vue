@@ -16,7 +16,7 @@ import topView from "../components/topView";
 import saleView from "../components/saleView";
 import bottomView from "@/components/bottomView";
 import mapView from "@/components/mapView";
-import { test } from "@/api";
+import { wordCloud, screenData, mapScatter } from "@/api";
 
 export default {
   name: "Home",
@@ -50,13 +50,39 @@ export default {
           { 日期: "1/5", 访问用户: 3792, 下单用户: 3492, 下单率: 0.323 },
           { 日期: "1/6", 访问用户: 4593, 下单用户: 4293, 下单率: 0.78 }
         ]
-      }
+      },
+      reportData: null,
+      screenData: null,
+      mapScatter: null
     };
   },
+  provide() {
+    return {
+      getReportData: this.getReportData,
+      getScreenData: this.getScreenData,
+      getMapScatter: this.getMapScatter
+    };
+  },
+  methods: {
+    getReportData() {
+      return this.reportData;
+    },
+    getScreenData() {
+      return this.screenData;
+    },
+    getMapScatter() {
+      return this.mapScatter;
+    }
+  },
   mounted() {
-    test().catch(e => {
-      console.log("e", e);
+    // 没有服务器，用成了前端mock数据代替
+    wordCloud().then(res => {
+      this.reportData = res;
     });
+    screenData().then(res => {
+      this.screenData = res;
+    });
+    mapScatter().then(res => (this.mapScatter = res));
   }
 };
 </script>

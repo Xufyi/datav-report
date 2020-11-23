@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const service = axios.create({
-    baseURl: "www.baidu.com",
+    baseURL: "https://apis.imooc.com",
     timeout: 5000
 })
 // 响应拦截器

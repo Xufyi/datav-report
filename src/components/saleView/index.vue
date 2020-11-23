@@ -36,7 +36,7 @@
           <div v-for="item in rankList" :key="item.no" class="item_wrap">
             <div :class="['item_no',+item.no <= 3 ? 'item_top' : '' ]">{{ +item.no }}</div>
             <span class="item_name">{{item.name}}</span>
-            <span class="item_num">{{item.num}}</span>
+            <span class="item_num">{{item.money}}</span>
           </div>
         </div>
       </div>
@@ -46,7 +46,9 @@
 </template>
 
 <script>
+import commonDataMixin from "@/components/mixins/commonDataMixin";
 export default {
+  mixins: [commonDataMixin],
   components: {},
   data() {
     return {
@@ -81,9 +83,25 @@ export default {
           }
         ]
       },
-      options: {
+      options: null,
+      rankList: []
+    };
+  },
+  watch: {
+    //初始回显
+    orderFullYear() {
+      this.render("年度销售量", this.orderFullYear, this.orderFullYearAxis);
+    },
+    orderRank() {
+      this.rankList = this.orderRank;
+    }
+  },
+  methods: {
+    render(title, data, xAxis) {
+      console.log(title, data, xAxis, "render");
+      this.options = {
         title: {
-          text: "年度销售额",
+          text: title,
           textStyle: {
             fontSize: 12,
             color: "#666"
@@ -93,20 +111,7 @@ export default {
         },
         xAxis: {
           type: "category",
-          data: [
-            "1月",
-            "2月",
-            "3月",
-            "4月",
-            "5月",
-            "6月",
-            "7月",
-            "8月",
-            "9月",
-            "10月",
-            "11月",
-            "12月"
-          ],
+          data: xAxis,
           axisTick: {
             alignWidthLabel: true,
             lineStyle: {
@@ -137,9 +142,10 @@ export default {
           }
         },
         series: {
+          name: title,
           type: "bar",
           barWidth: "35%",
-          data: [200, 250, 300, 350, 250, 200, 250, 300, 350, 350, 300, 250]
+          data: data
         },
         color: ["#3398DB"],
         grid: {
@@ -147,21 +153,21 @@ export default {
           left: 60,
           righe: 60,
           bottom: 50
-        }
-      },
-      rankList: [
-        { no: "1", name: "麦当劳", num: "32,234" },
-        { no: "2", name: "麦当劳", num: "32,234" },
-        { no: "3", name: "麦当劳", num: "32,234" },
-        { no: "4", name: "麦当劳", num: "32,234" },
-        { no: "5", name: "麦当劳", num: "32,234" },
-        { no: "6", name: "麦当劳", num: "32,234" },
-        { no: "7", name: "麦当劳", num: "32,234" }
-      ]
-    };
-  },
-  methods: {
-    handleSelect(val) {}
+        },
+        tooltip: {}
+      };
+    },
+    handleSelect(val) {
+      // === 同教程吗？
+      if (val === "1") {
+        console.log(this.orderFullYear, this.orderFullYearAxis);
+        this.render("年度销售量", this.orderFullYear, this.orderFullYearAxis);
+        this.rankList = this.orderRank;
+      } else if (val === "2") {
+        this.render("年度访问量", this.userFullYear, this.userFullYearAxis);
+        this.rankList = this.userRank;
+      }
+    }
   }
 };
 </script>
