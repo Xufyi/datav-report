@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import commonDataMixin from "@/components/mixins/commonDataMixin";
+
 function getColor(value) {
   return value > 0 && value <= 0.5
     ? "rgba(97,217,0,.7)"
@@ -14,56 +16,70 @@ function getColor(value) {
 
 export default {
   name: "mapView",
+  mixins: [commonDataMixin],
   data() {
     return {
-      chartData: {
-        columns: ["title", "percent"],
-        rows: [{ title: "rate", percent: 0.45 }]
-      },
+      chartData: {},
       chartSettings: {}
     };
   },
-  mounted() {
-    this.chartSettings = {
-      seriesMap: {
-        rate: {
-          //对应rows中的 title 值
-          radius: "80%", //半径
-          label: {
-            // normal: {
-            //   formatter: v => {
-            //     return `${Math.floor(v.data.value * 100)}`;
-            //   }
-            // },
-            textStyle: {
-              fontSize: 36,
-              color: "#999",
-              fontWeight: "normal"
+  mounted() {},
+  methods: {
+    render() {
+      const { userGrowthLastDay } = this.calScreenData;
+      this.chartData = {
+        columns: ["title", "percent"],
+        //percent要求小于 1数字
+        rows: [
+          { title: "rate", percent: (+userGrowthLastDay / 100).toFixed(2) }
+        ]
+      };
+      this.chartSettings = {
+        seriesMap: {
+          rate: {
+            //对应rows中的 title 值
+            radius: "80%", //半径
+            label: {
+              // normal: {
+              //   formatter: v => {
+              //     return `${Math.floor(v.data.value * 100)}`;
+              //   }
+              // },
+              textStyle: {
+                fontSize: 36,
+                color: "#999",
+                fontWeight: "normal"
+              },
+              position: ["50%", "50%"]
+              // insideColor: "red" //文字与波浪重叠颜色，需去掉normal配置才生效
             },
-            position: ["50%", "50%"]
-            // insideColor: "red" //文字与波浪重叠颜色，需去掉normal配置才生效
-          },
-          outline: {
+            outline: {
+              itemStyle: {
+                borderColor: "#aaa4a4",
+                borderWidth: 1,
+                color: "none",
+                shadowColor: "#fff"
+              },
+              borderDistance: 0 //内外边间距0
+            },
+            backgroundStyle: {
+              color: "#fff"
+            },
             itemStyle: {
-              borderColor: "#aaa4a4",
-              borderWidth: 1,
-              color: "none",
+              shadowBlue: 0,
               shadowColor: "#fff"
             },
-            borderDistance: 0 //内外边间距0
-          },
-          backgroundStyle: {
-            color: "#fff"
-          },
-          itemStyle: {
-            shadowBlue: 0,
-            shadowColor: "#fff"
-          },
-          amplitude: 8,
-          color: [getColor(this.chartData.rows[0].percent)] //颜色
+            amplitude: 8,
+            color: [getColor(this.chartData.rows[0].percent)] //颜色
+          }
         }
-      }
-    };
+      };
+    }
+  },
+  watch: {
+    calScreenData() {
+      this.render();
+    }
   }
 };
 </script>

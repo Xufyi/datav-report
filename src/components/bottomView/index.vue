@@ -10,12 +10,12 @@
             <div class="charts_wrap">
               <div class="chart1">
                 <div class="chart_title">搜索用户数</div>
-                <div class="chart_data">93,270</div>
+                <div class="chart_data">{{ totalUser | format }}</div>
                 <v-chart :options="searchUserOptions" />
               </div>
               <div class="chart2">
                 <div class="chart_title">搜索量</div>
-                <div class="chart_data">179,497</div>
+                <div class="chart_data">{{ totalSearch | format }}</div>
                 <v-chart :options="searchNumOptions" />
               </div>
             </div>
@@ -30,7 +30,9 @@
               <el-pagination
                 background
                 layout="prev, pager, next"
-                :total="100">
+                :total="total"
+                :page-size="pageSize"
+                @current-change="currentChange">
               </el-pagination>
             </div>
           </div>
@@ -41,7 +43,7 @@
       <el-card shadow="hover" :body-style="{ 'padding':'10px 0'}">
         <template v-slot:header>
           <div class="view_title">分类销售排行</div>
-          <el-radio-group v-model="radio1" size="small">
+          <el-radio-group v-model="radio1" @change="radioChange" size="small">
             <el-radio-button label="品类" />
             <el-radio-button label="商品" />
           </el-radio-group>
@@ -57,141 +59,69 @@
 </template>
 
 <script>
+import commonDataMixin from "@/components/mixins/commonDataMixin";
+const colors = [
+  "#8d7fec",
+  "#5085f2",
+  "#f8726b",
+  "#e7e702",
+  "#78f283",
+  "#6bc1fc"
+];
 export default {
+  mixins: [commonDataMixin],
   components: {},
+
   data() {
     return {
-      searchUserOptions: {
-        xAxis: {
-          type: "category",
-          boundaryGap: false
-        },
-        yAxis: {
-          show: false
-        },
-        series: [
-          {
-            type: "line",
-            data: [100, 150, 200, 250, 200, 150, 100, 50, 100, 150],
-            areaStyle: {
-              color: "rgba(95,187,255,.5)"
-            },
-            lineStyle: {
-              color: "rgba(95,187,255,.5)"
-            },
-            itemStyle: {
-              opacity: 0
-            },
-            smooth: true
-          }
-        ],
-        grid: {
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0
-        }
-      },
-      searchNumOptions: {
-        xAxis: {
-          type: "category",
-          boundaryGap: false
-        },
-        yAxis: {
-          show: false
-        },
-        series: [
-          {
-            type: "line",
-            data: [100, 150, 200, 250, 200, 150, 100, 50, 100, 150],
-            areaStyle: {
-              color: "rgba(95,187,255,.5)"
-            },
-            lineStyle: {
-              color: "rgba(95,187,255,.5)"
-            },
-            itemStyle: {
-              opacity: 0
-            },
-            smooth: true
-          }
-        ],
-        grid: {
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0
-        }
-      },
-      tableData: [
-        {
-          no: "1",
-          keyWord: "牛肉",
-          searchNum: "8869",
-          userNum: "8199",
-          clickRate: "92.45%"
-        },
-        {
-          no: "2",
-          keyWord: "跑腿",
-          searchNum: "8159",
-          userNum: "7719",
-          clickRate: "94.61%"
-        },
-        {
-          no: "3",
-          keyWord: "麦当劳",
-          searchNum: "9127",
-          userNum: "7433",
-          clickRate: "92.45%"
-        },
-        {
-          no: "4",
-          keyWord: "大连",
-          searchNum: "7646",
-          userNum: "6261",
-          clickRate: "92.45%"
-        }
-      ],
+      searchUserOptions: {},
+      searchNumOptions: {},
+      tableData: [],
       radio1: "品类",
-      salePieOptions: {}
+      salePieOptions: {},
+      total: 0,
+      pageSize: 4,
+      totalUser: 0,
+      totalSearch: 0
     };
   },
   methods: {
-    renderPieChart() {
-      const mockData = [
-        {
-          legendname: "粉面粥店",
-          name: "品牌分类 | 15.40%", //配置lagen显示文字
-          value: 67,
-          percent: "15.40",
+    currentChange(val) {
+      this.tableData = this.totalData.slice(
+        (val - 1) * this.pageSize,
+        val * this.pageSize
+      );
+    },
+    radioChange(val) {
+      if (val === "品类") {
+        this.renderPieChart(this.categorData1, "品类");
+      } else {
+        this.renderPieChart(this.categorData2, "商品");
+      }
+    },
+    renderPieChart(categorData, type) {
+      if (!categorData || !categorData.data1) {
+        return;
+      }
+      const total = categorData.data1.reduce((s, i) => s + i, 0);
+      const chartData = categorData.data1.map((item, index) => {
+        const percent = (item / total).toFixed(2);
+        return {
+          legendname: categorData.axisX[index],
+          name: `${type}分类 | ${percent}%`, //配置lagen显示文字
+          value: item,
+          percent: percent,
           itemStyle: {
-            color: "#e7e782"
+            // 实际项目可多配置几个颜色，或是显示默认前6个数据
+            color: colors[index % colors.length]
           }
-        },
-        {
-          legendname: "简易便当",
-          name: "品牌分类 | 23.30%", //配置lagen显示文字
-          value: 97,
-          percent: "23.30%",
-          itemStyle: {
-            color: "#8d7fec"
-          }
-        },
-        {
-          legendname: "汉堡披萨",
-          name: "累计订单量 | 21.150%",
-          value: 92,
-          percent: "21.15%",
-          itemStyle: {
-            color: "#5885f2"
-          }
-        }
-      ];
+        };
+      });
+
       this.salePieOptions = {
         title: [
           {
-            text: "品牌分类",
+            text: `${type}分类`,
             textStyle: {
               fontSize: 14,
               color: "#666"
@@ -218,7 +148,7 @@ export default {
         series: [
           {
             type: "pie",
-            data: mockData,
+            data: chartData,
             label: {
               normal: {
                 show: true,
@@ -271,10 +201,79 @@ export default {
           }
         }
       };
+    },
+    renderLineChart() {
+      const render = key => {
+        const data = [];
+        const xAxis = [];
+        this.totalData.forEach(item => {
+          data.push(item[key]);
+          xAxis.push(item.keyWord);
+        });
+        return {
+          xAxis: {
+            type: "category",
+            boundaryGap: false,
+            data: xAxis
+          },
+          yAxis: {
+            show: false
+          },
+          tooltip: {},
+          series: [
+            {
+              type: "line",
+              data,
+              areaStyle: {
+                color: "rgba(95,187,255,.5)"
+              },
+              lineStyle: {
+                color: "rgba(95,187,255,.5)"
+              },
+              itemStyle: {
+                opacity: 0
+              },
+              smooth: true
+            }
+          ],
+          grid: {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
+          }
+        };
+      };
+
+      this.searchUserOptions = render("userNum");
+      this.searchNumOptions = render("searchNum");
     }
   },
   mounted() {
     this.renderPieChart();
+  },
+  watch: {
+    calReportData() {
+      this.totalData = this.calReportData.map((item, index) => {
+        return {
+          no: index++,
+          keyWord: item.word,
+          searchNum: item.count,
+          userNum: item.user,
+          clickRate: `${(item.user / item.count).toFixed(2) * 100}%`
+        };
+      });
+      this.tableData = this.totalData.slice(0, this.pageSize);
+      this.total = this.totalData.length;
+      // reduce,第二参数表示s初始值
+      this.totalUser = this.totalData.reduce((s, i) => s + i.userNum, 0);
+      this.totalSearch = this.totalData.reduce((s, i) => s + i.searchNum, 0);
+
+      this.renderLineChart();
+    },
+    categorData1() {
+      this.renderPieChart(this.categorData1, "品牌");
+    }
   }
 };
 </script>

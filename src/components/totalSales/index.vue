@@ -30,7 +30,6 @@
 <script>
 import commonCardMixin from "@/components/mixins/commonCardMixin";
 import commonDataMixin from "@/components/mixins/commonDataMixin";
-import { setTimeout } from "timers";
 
 export default {
   mixins: [commonCardMixin, commonDataMixin],
@@ -38,16 +37,7 @@ export default {
   data() {
     return {};
   },
-  mounted() {
-    setTimeout(() => {
-      console.log(
-        // this.calReportData,
-        this.calScreenData,
-        // this.calMapScatter,
-        9999
-      );
-    }, 2000);
-  }
+  mounted() {}
 };
 </script>
 

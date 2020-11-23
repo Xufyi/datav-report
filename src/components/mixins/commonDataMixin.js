@@ -1,7 +1,7 @@
 
 
 // 处理千分符号
-function formatMoney(n) {
+function format(n) {
     //1、toLocaleString 只能格式化数字
     // return n.toLocaleString()
     //2、正则，replace,$&表示匹配到的值
@@ -14,7 +14,7 @@ function formatPercent(n) {
 }
 
 function wrapperNmuber(o, k) {
-    return o && o[k] ? `￥ ${formatMoney(o[k])}` : '￥ 0'
+    return o && o[k] ? `￥ ${format(o[k])}` : '￥ 0'
 }
 
 function wrapperPercent(o, k) {
@@ -23,6 +23,17 @@ function wrapperPercent(o, k) {
 
 function wrapperArray(o, k) {
     return o && o[k] ? o[k] : []
+}
+
+function wrapperObjet(o, k) {
+    if (o && k.indexOf('.')) {
+        const keys = k.split('.')
+        keys.forEach(key => {
+            o = o[key]
+        })
+        return o
+    }
+    return o && o[k] ? o[k] : {}
 }
 
 export default {
@@ -57,14 +68,24 @@ export default {
         userRank() {
             return wrapperArray(this.calScreenData, 'userRank')
         },
-
-
+        categorData1() {
+            return wrapperObjet(this.calScreenData, 'category.data1')
+        },
+        categorData2() {
+            return wrapperObjet(this.calScreenData, 'category.data2')
+        },
 
         calReportData() {
             return this.getReportData();
         },
         calMapScatter() {
             return this.getMapScatter();
+        }
+    },
+    // vue3已经不能使用过滤器
+    filters: {
+        format(v) {
+            return format(v)
         }
     },
     inject: ["getReportData", "getScreenData", "getMapScatter"],

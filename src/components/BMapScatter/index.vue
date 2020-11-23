@@ -11,16 +11,8 @@
 
 <script>
 import "echarts/extension/bmap/bmap";
-// 假数据
-import mapStyle from "@/views/mapStyle";
-import mapData from "@/views/mapData";
+import commonDataMixin from "@/components/mixins/commonDataMixin";
 
-const { data: cityAndSale, geo: coordinate } = mapData;
-const testPoint = calData(cityAndSale, coordinate);
-const testPoint2 = calData(
-  cityAndSale.sort((a, b) => b.value - a.value).slice(0, 9),
-  coordinate
-);
 function calData(cityAndSale, coordinate) {
   let res = [];
   cityAndSale.forEach(v => {
@@ -34,6 +26,7 @@ function calData(cityAndSale, coordinate) {
 
 export default {
   name: "bmap2",
+  mixins: [commonDataMixin],
   components: {},
   data() {
     return {
@@ -49,13 +42,31 @@ export default {
           //这里开启才会显示地图
           center: [120, 30],
           zoom: 5,
-          roam: false,
-          mapStyle: {
-            styleJson: mapStyle
-          }
+          roam: false
+          // mapStyle: {
+          //   styleJson: mapStyle
+          // }
         }
       },
-      chartSeries: [
+      chartSeries: [],
+      chartTooltip: { show: true }
+    };
+  },
+  watch: {
+    calMapScatter() {
+      this.renderMap();
+    }
+  },
+  methods: {
+    renderMap() {
+      const { data: cityAndSale, geo: coordinate } = this.calMapScatter;
+      const testPoint = calData(cityAndSale, coordinate);
+      const testPoint2 = calData(
+        cityAndSale.sort((a, b) => b.value - a.value).slice(0, 9),
+        coordinate
+      );
+
+      this.chartSeries = [
         {
           name: "销售额", //tooltip标题
           type: "scatter",
@@ -112,11 +123,9 @@ export default {
             shadowColor: "#333"
           }
         }
-      ],
-      chartTooltip: { show: true }
-    };
-  },
-  mounted() {}
+      ];
+    }
+  }
 };
 </script>
 
