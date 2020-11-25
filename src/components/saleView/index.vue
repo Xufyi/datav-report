@@ -98,7 +98,6 @@ export default {
   },
   methods: {
     render(title, data, xAxis) {
-      console.log(title, data, xAxis, "render");
       this.options = {
         title: {
           text: title,
@@ -158,9 +157,7 @@ export default {
       };
     },
     handleSelect(val) {
-      // === 同教程吗？
       if (val === "1") {
-        console.log(this.orderFullYear, this.orderFullYearAxis);
         this.render("年度销售量", this.orderFullYear, this.orderFullYearAxis);
         this.rankList = this.orderRank;
       } else if (val === "2") {

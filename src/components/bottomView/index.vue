@@ -250,7 +250,7 @@ export default {
     }
   },
   mounted() {
-    this.renderPieChart();
+    // this.renderPieChart();
   },
   watch: {
     calReportData() {
