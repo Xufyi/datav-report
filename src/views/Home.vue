@@ -83,6 +83,7 @@ export default {
       this.screenData = res;
     });
     mapScatter().then(res => (this.mapScatter = res));
+    console.log('test')
   }
 };
 </script>
